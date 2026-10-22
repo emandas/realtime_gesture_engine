@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Real-Time Gesture Engine: WebSocket Test</h1>
+    <p>Open Developer Tools (F12) -> Console to see the server connection!</p>
+    <!-- The Viewfinder (Keep this visible) -->
+    <video width="400" height="400" autoplay style="transform: scaleX(-1);"></video>
+
+    <!-- The Snapshot Board (Hide this from the user) -->
+     <canvas width="400" height="400" style="display: none;"></canvas> 
+</body>
+<script>
+    const video = document.querySelector('video')
+    const canvas = document.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+    const ws = new WebSocket('ws://127.0.0.1:8000/ws/stream');
+    ws.onopen= function () {
+        navigator.mediaDevices.getUserMedia({video : true})
+
+            .then(function (stream){
+            video.srcObject = stream;
+            setInterval(() => {
+
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const base64image = canvas.toDataURL('image/jpeg', 0.5);
+
+
+                
+                ws.send(base64image);
+
+            }, 100)
+        })
+            .catch(function (error){
+                console.error("Camera access denied or failed:", error);
+            });
+
+
+    };
+    ws.onmessage = function (event) {
+        // console.log(event.data)
+
+    }
+    
+</script>
+</html>
