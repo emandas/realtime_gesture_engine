@@ -21,8 +21,8 @@ async def real_time_vision(*,websocket:WebSocket):
         while True:
             data = await websocket.receive_text()
             img = base64_2image_decoder(base64str=data)
-            print(f"{i} Received data :{data[:30]}")
-            print(f"{i} generated image :{img.shape}")
+            print(f"{i} Received data : {data[:30]}")
+            print(f"{i} generated image : {img.shape}")
 
             i += 1
             await websocket.send_text(data[:30])
